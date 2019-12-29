@@ -358,10 +358,15 @@ class Cell {
     this.yOnCanvas = yOnGrid * cellHeight;
     this.reward = defaultReward;
     this.isTarget = false;
+    this.isIce = false;
   }
 
   changeIsWall() {
     this.isWall = !this.isWall;
+  }
+
+  changeIsIce() {
+    this.isIce = !this.isIce;
   }
 
   changeIsTarget() {
