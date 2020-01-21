@@ -19,9 +19,9 @@ var buttonResetRobot;
 var buttonPlaceTarget;
 var buttonMoveRobot;
 var buttonTrain;
-//var buttonVisQ;
+var buttonVisQ;
 
-var checkBoxVisQ;
+//var checkBoxVisQ;
 
 var qFunction;
 var discount;
@@ -116,13 +116,13 @@ function setup() {
     buttonTrain.position(gridWidth * cellWidth + 100, 120);
     buttonTrain.mousePressed(startTraining);
 
-    /*buttonVisQ = createButton('Visualize Q-function');
+    buttonVisQ = createButton('Visualize Q-function');
     buttonVisQ.position(gridWidth * cellWidth + 100, 150);
-    buttonVisQ.mousePressed(toggeQvis);*/
+    buttonVisQ.mousePressed(toggleQvis);
 
-    checkBoxVisQ = createCheckbox('Visualize Q-function', true);
+    /*checkBoxVisQ = createCheckbox('Visualize Q-function', true);
     checkBoxVisQ.position(gridWidth * cellWidth + 100, 150);
-    checkBoxVisQ.changed(toggleQvis);
+    checkBoxVisQ.changed(toggleQvis);*/
 }
 
 function draw() {
@@ -209,11 +209,7 @@ function drawTarget(cell) {
 }
 
 function toggleQvis() {
-  if (this.checked()) {
-    visQ = true;
-  } else {
-    visQ = false;
-  }
+  visQ = !visQ;
 
 }
 
