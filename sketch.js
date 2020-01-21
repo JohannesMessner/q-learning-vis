@@ -50,7 +50,7 @@ function setup() {
   defaulRobotY = 5;
   defaultRobotX = 5;
 
-  discount = 1/2;
+  discount = 3/4;
   learningRate = 1/2;
   defaultReward = -1;
   targetReward = 50;
