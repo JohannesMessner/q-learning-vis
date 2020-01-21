@@ -21,8 +21,6 @@ var buttonMoveRobot;
 var buttonTrain;
 var buttonVisQ;
 
-//var checkBoxVisQ;
-
 var qFunction;
 var discount;
 var learningRate;
@@ -50,6 +48,7 @@ function setup() {
   defaulRobotY = 5;
   defaultRobotX = 5;
 
+  //initialize values relevant to Q-learning
   discount = 3/4;
   learningRate = 1/2;
   defaultReward = -1;
@@ -60,6 +59,7 @@ function setup() {
   trainingRunsPerformed = 0;
   visQ = true;
 
+  // initialize Q-function with initial value for every state
   qFunction = new Array(gridWidth);
   for (let k = 0; k < gridWidth; k++) {
     qFunction[k] = new Array(gridHeight);
@@ -71,6 +71,7 @@ function setup() {
     }
   }
 
+  // colors the Q-function will take depending on its value
   gradientColors = [color(255,255,255,200), color(204,229,255,200), color(204,255,255,200),
                             color(204,255,229,200),color(204,255,204,200),
                             color(153,255,153,200), color(102,255,102,200),
@@ -85,6 +86,7 @@ function setup() {
 
   createCanvas(gridWidth * cellWidth + 200, gridHeight * cellHeight);
 
+  // initialize a grid of cells
   grid = new Array(gridWidth);
   for (let i = 0; i < gridWidth; i++) {
     grid[i] = new Array(gridHeight);
@@ -93,9 +95,11 @@ function setup() {
       }
     }
 
+    // initialize and draw robot
     robot = new Robot(defaultRobotX, defaulRobotY);
     circle(robot.xOnGrid*cellWidth + cellWidth/2, robot.yOnGrid*cellHeight + cellHeight/2, cellWidth);
 
+    // initialize all the buttons
     buttonStart = createButton('Start/Stop Robot');
     buttonStart.position(gridWidth * cellWidth + 100, 0);
     buttonStart.mousePressed(toggelRobotStarted);
@@ -119,10 +123,6 @@ function setup() {
     buttonVisQ = createButton('Visualize Q-function');
     buttonVisQ.position(gridWidth * cellWidth + 100, 150);
     buttonVisQ.mousePressed(toggleQvis);
-
-    /*checkBoxVisQ = createCheckbox('Visualize Q-function', true);
-    checkBoxVisQ.position(gridWidth * cellWidth + 100, 150);
-    checkBoxVisQ.changed(toggleQvis);*/
 }
 
 function draw() {
@@ -131,13 +131,16 @@ function draw() {
     for (let j = 0; j < gridHeight; j++) {
       let x = i*cellWidth;
       let y = j*cellHeight;
+      // draw cells themselves
       rect(x, y, cellWidth, cellHeight)
 
       if (visQ) {
+        // draw color representation of the Q-function
         drawQfunction(i, j);
       }
       let c = grid[i][j];
       if (c.isTarget) {
+        // draw target cell
         drawTarget(c);
       }
       if (c.hasRobot) {
@@ -150,13 +153,17 @@ function draw() {
   }
 
   if (inTraining) {
+    // when the robot is in training he updates at every frame
     trainRobot();
   } else if (frameCount % 15 == 0 && robotStarted) {
+    // when the robot is not in training mode he moves only every 15 frames
     robot.decideAndMakeMove();
   }
 }
 
 function trainRobot() {
+  // lets the robot run until he gets to a target and resets him automatically
+  // Essentiallly does the same thing as normal exploration, but faster
   if (trainingRunsPerformed >= 50) {
     inTraining = false;
     trainingRunsPerformed = 0;
@@ -210,7 +217,6 @@ function drawTarget(cell) {
 
 function toggleQvis() {
   visQ = !visQ;
-
 }
 
 function startTraining() {
@@ -325,6 +331,7 @@ function getCellIndex(xOnGrid, yOnGrid) {
 }
 
 function getBestMove(x, y) {
+  // calculates which move is the best one according to the Q-function
   let bestMove = [0];
   let bestReward = defaultReward;
   for (let move = 0; move < 4; move++) {
@@ -338,12 +345,15 @@ function getBestMove(x, y) {
   if (bestMove.length == 1) {
     return bestMove[0];
   } else {
-    // choose random move among equally valued moves
+    // Multiple moves have the same optimal value
+    // Choose random move among equally valued moves
     return bestMove[Math.floor(Math.random() * bestMove.length)];
   }
 }
 
 function updateQ(x, y, move, reward, newX, newY) {
+  // Performs the learning step by updating the Q-function
+  // At each state transtion the Q-function incorporates the observed reward
   let oldQValue = qFunction[x][y][move];
   let maxValue = 0;
   for (let move = 0; move < 4; move++) {
@@ -456,6 +466,7 @@ class Robot{
   }
 
   reset() {
+    // Moves the robot back to his initial position
     grid[this.xOnGrid][this.yOnGrid].hasRobot = false;
     this.xOnGrid = defaultRobotX;
     this.yOnGrid = defaulRobotY;
